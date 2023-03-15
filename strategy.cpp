@@ -345,16 +345,17 @@ class quad //ALL VECTORS AND BUFFERS MANAGEMENT
 public:
     vector<object*> objects; // All objects in the world
     vector<object*> objects_buff; // All objects in the world buffer
-    vector<vector<object*>> quads; // 10x10 quads of vectors of pointers
+    vector<vector<object*>> quads;
+    //vector<object*> quads[QUAD_PART];
     vector<cell> world; // All cells in the world
 
     vector<cell>::iterator it;
     vector<object*>::iterator it_obj;
     vector<object*>::iterator it_inside;
 
-    quad() 
+    quad():quads(QUAD_PART, vector<object*>())
     {
-        quads.resize(WORLD_WIDTH/QUAD_PART);
+        //quads.resize(WORLD_WIDTH/QUAD_PART);
         for (int i = 0; i < WORLD_WIDTH/QUAD_PART; i++)
         {
             quads[i] = vector<object*>();
@@ -400,7 +401,7 @@ public:
                 int old_quad = quad_get((*it_obj)->x, (*it_obj)->y);
                 quads[old_quad].erase(remove(quads[old_quad].begin(), quads[old_quad].end(), *it_obj), quads[old_quad].end());
                 int index = (*it_obj)->x * WORLD_WIDTH + (*it_obj)->y;
-                quads[old_quad].erase(remove(quads[old_quad].begin(), quads[old_quad].end(), *it_obj), quads[old_quad].end());
+                world[index].inside.erase(remove(world[index].inside.begin(), world[index].inside.end(), *it_obj), world[index].inside.end());
                 //UPDATE COORDS
                 (*it_obj)->x = (*it_obj)->x_loc;
                 (*it_obj)->y = (*it_obj)->y_loc;
@@ -718,7 +719,7 @@ int main(int argc, char **argv) //int argc, char **argv
     perbor = 0;
     gena = 0;
     drop = 0;
-    
+
     while (gena < 1000)
     {
         drop  = randomer(rng, WORLD_WIDTH*WORLD_WIDTH);
